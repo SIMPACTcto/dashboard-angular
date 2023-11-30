@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { ConfigService } from '@config';
 import { UnsubscribeOnDestroyAdapter } from '@shared';
 import { InConfiguration, AuthService, LanguageService } from '@core';
-import { MemberService } from '@core/service/member.adbo.sbendervice';
+import { MemberService } from '@core/service/member.service';
 import { AccountsService } from '@core/service/accounts.service';
 
 interface Notifications {
@@ -138,7 +138,7 @@ export class HeaderComponent
      this.authService.logout().then((res) => {
       let datax:any=res
       if (datax.result === 0 ) {
-        window.location.href = 'http://localhost:4200/api/login.php';
+        window.location.href = 'https://mlmcreatorsindia.com/outerapi/login.php';
         // this.router.navigateByUrl("")
       }
     });

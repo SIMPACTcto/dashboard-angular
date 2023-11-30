@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4200/api.php',
-  authUrl: 'http://localhost:4200/api/auth.php',
-  signupUrl: 'http://localhost:4200/api/api.php',
+  apiUrl: 'https://mlmcreatorsindia.com/outerapi/api.php',
+  authUrl: 'https://mlmcreatorsindia.com/outerapi/auth.php',
+  signupUrl: 'https://mlmcreatorsindia.com/outerapi/api.php',
 };
 
 /*

@@ -156,7 +156,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.authService.logout().then((res) => {
       let datax:any=res
       if (datax.result === 0) {
-        window.location.href = 'http://localhost:4200/api/login.php';
+        window.location.href = 'https://mlmcreatorsindia.com/outerapi/login.php';
         // this.router.navigateByUrl("")
       }
     });

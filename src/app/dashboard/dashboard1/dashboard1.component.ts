@@ -35,7 +35,7 @@ export type ChartOptions = {
 
 };
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MemberService } from '@core/service/member.adbo.sbendervice';
+import { MemberService } from '@core/service/member.service';
 import { AccountsService } from '@core/service/accounts.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TopupModalComponent } from '../modals/topup-modal/topup-modal.component';

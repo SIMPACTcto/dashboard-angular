@@ -4,6 +4,8 @@ import { HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { environment } from 'environments/environment';
+import { throttleTime, concatMap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, throwError } from 'rxjs';
 
 // const httpOptions = {
 //     headers: new HttpHeaders({
@@ -20,19 +22,40 @@ const httpOptions = {
 };
 @Injectable()
 export class AccountsService {
-  //  apiUrl='api.php';
+   apiUrl='https://mlmcreatorsindia.com/outerapi/members.php';
   // ifscurl='https://ifsc.razorpay.com/';
-  // authurl='https://www.coinbdex.com/api/members.php';
+  // authurl='https://mlmcreatorsindia.com/outerapi/members.php';
 
-  //private token :string=""
+  // private token :string=""
   constructor(private http: HttpClient, private _authServer: AuthService) {}
   token = this._authServer.currentUserValue.token;
   authurl = environment.apiUrl;
 
-  async personalinfo() {
-    let cc = [{ route: 'personalinfo' }];
-    return await lastValueFrom(this.http.post(this.authurl, cc, httpOptions));
-  }
+  private requestQueue = new BehaviorSubject<any>(null);
+
+  // Add this method to enqueue requests
+private enqueueRequest(request: any) {
+  this.requestQueue.next(request);
+}
+
+// Add throttleTime to your API request methods
+// Modify your API request methods to use throttleTime and concatMap for queuing
+async personalinfo() {
+  let cc = [{ route: 'personalinfo' }];
+  return await lastValueFrom(
+    this.requestQueue.pipe(
+      throttleTime(1000), // Adjust the time (in milliseconds) according to your requirements
+      concatMap(() =>
+        this.http.post(this.authurl, cc, httpOptions).pipe(
+          catchError((error) => {
+            console.error('HTTP Request Error:', error);
+            return throwError(error);
+          })
+        )
+      )
+    )
+  );
+}
 
   async getpersonalinfoforteamedit(cuserid: string) {
     let cc = [{ route: 'getpersonalinfoforteamedit' }, [{ cuserid: cuserid }]];

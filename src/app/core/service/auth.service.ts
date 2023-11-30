@@ -1,74 +1,128 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, lastValueFrom, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { User } from '../models/user';
-import { environment } from 'environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router'; 
+import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Access-Control-Allow-Origin': '*',
+  }),
+};
+
+@Injectable()
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  apiUrl = 'https://mlmcreatorsindia.com/outerapi/api.php';
+  //ifscurl='https://ifsc.razorpay.com/';
+  authurl = 'https://mlmcreatorsindia.com/outerapi/auth.php';
 
-  constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User>(
-      JSON.parse(localStorage.getItem('currentUser') || '{}')
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
+  constructor(private http: HttpClient) {}
+
+  async checksid(userid: string, side: number) {
+    userid = userid.trim();
+    return await this.http
+      .get(this.apiUrl + '?route=getsponsor&userid=' + userid + 'side=' + side)
+      .toPromise();
   }
 
-  public get currentUserValue(): User {
-    return this.currentUserSubject.value;
+  async checkpin(pinno: string) {
+    return await this.http
+      .get(this.apiUrl + '?route=checkpin&pinno=' + pinno)
+      .toPromise();
   }
 
-  login(username: string, password: string) {
-    let token:string=btoa(username+':'+password)
-    return this.http
-      .post<User>(`${environment.authUrl}`, {
-        token
-      })
-      .pipe(
-        map((user) => {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          return user;
-        }) , catchError(this.handleError)
-      );
-  }
-  checksid(sid:string){
-    let route:string="checksid"
-    return lastValueFrom(this.http.post(`${environment.signupUrl}`,{route,sid}))
+  public async checkifsc(username: string) {
+    return await this.http
+      .get(this.authurl + '?route=getsponsorname&suserid=' + username)
+      .toPromise();
   }
 
-  signup(sid:string,name:string,mobile:string,email:string,password:string) {
-    let route:string="register"
-    return lastValueFrom(this.http.post(`${environment.signupUrl}`,{route,sid,name,mobile,email,password}))
+  async register(
+    pinno: number,
+    sid: string,
+    uid: string,
+    leftright: number,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    city: string,
+    contact: string,
+    ifsc: string,
+    acno: string,
+    bankname: string,
+    pan: string,
+    pincode: number
+  ) {
+    let body =
+      '{route:register,pinno:' +
+      pinno +
+      ',sid:' +
+      sid +
+      ',uid:' +
+      uid +
+      ',side:' +
+      leftright +
+      ',firstname:' +
+      firstname +
+      ',lastname:' +
+      lastname +
+      ',middlename:' +
+      middlename +
+      ',city:' +
+      city +
+      ',contact:' +
+      contact +
+      ',ifsc:' +
+      ifsc +
+      ',acno:' +
+      acno +
+      ',bankname:' +
+      bankname +
+      ',pan:' +
+      pan +
+      ',pincode:' +
+      pincode +
+      '}';
+    return await this.http.post(this.apiUrl, body, httpOptions).toPromise();
   }
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error);
+  async login(username: string, password: string) {
+    var base64string = btoa(username + ':' + password);
+    let body = 'route=login&token=' + base64string;
+    return await this.http.post(this.authurl, body, httpOptions).toPromise();
+  }
+
+  async forgotpassword(username: string, contact: string) {
+    var base64string = btoa(username + ':' + contact);
+    let body = '{route:forgotpassword,token=' + base64string + '}';
+    return await this.http.post(this.apiUrl, body, httpOptions).toPromise();
+  }
+
+  getAuthorizationToken() {
+    const authTokenString = localStorage.getItem('authToken');
+    if (environment.production && authTokenString) {
+      return JSON.parse(authTokenString).token;
     } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(
-        `Backend returned code ${error.status}, body was: `, error.error);
+      return '663586F7-5B56-4E5F-92FC-B5CBDE143B98';
     }
-    // Return an observable with a user-facing error message.
-    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+  
+  setAuthorizationToken(token: string) {
+    localStorage.clear();
+    localStorage.setItem('authToken', token);
   }
 
-  logout() {
-    // remove user from local storage to log user out
-    let route:string="logout"
-    localStorage.removeItem('currentUser');
-      this.currentUserSubject.next(this.currentUserValue);
-      return lastValueFrom(this.http.post(`${environment.apiUrl}`,{route}))
-   
-  }
-}
+  
+logout() {
+  // Clear the authentication token from localStorage
+  localStorage.removeItem('authToken');
+
+  // Add any additional logout actions here, such as navigating to the login page or notifying the server.
+
+  // For example, if you are using Angular Router, you might navigate to the login page:
+  // import { Router } from '@angular/router';
+ this.router.navigate(['/login.php']);
+
+    }
+}  

@@ -1,107 +1,248 @@
-<section class="content">
-    <div class="content-block">
-      <div class="block-header">
-        <!-- breadcrumb -->
-        <app-breadcrumb [title]="dtitle" [items]="['Team']" [active_item]="'Level Team'"></app-breadcrumb>
-      </div>
-      <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <div class="card">
-            <div class="materialTableHeader">
-              <div class="left">
-                <ul class="header-buttons-left ms-0">
-                  <li class="tbl-title">
-                    <h2>Level Team</h2>
-                  </li>
-                
-                </ul>
-                
-              </div>
-              <div class="right">
-                <ul>
-                  
-                     <li class="tbl-title">
-                        <mat-form-field>
-                        <mat-select [(value)]="level" (selectionChange)="loadData()" [(ngModel)]="level">
-                            <mat-option [value]="0">All Level</mat-option>
-                            <mat-option [value]="option"   *ngFor="let option of levels">Level {{ option }}</mat-option>
-                          </mat-select>
-                        </mat-form-field>
-                     </li>
-                </ul>
-              </div>
-            </div>
-            <div class="body overflow-auto">
-                <div class="responsive_table">
-                <table mat-table [dataSource]="dataSource" class="mat-cell advance-table">
-
-                    <!--- Note that these columns can be defined in any order.
-                          The actual rendered columns are set as a property on the row definition" -->
-                  
-                    <!-- Position Column 
-                    <ng-container matColumnDef="position">
-                      <th mat-header-cell *matHeaderCellDef> No. </th>
-                      <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-                    </ng-container>-->
-                  
-                    <ng-container matColumnDef="side">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Sr.
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element; let i = index;">
-                          <span class="mobile-label">Sr.:</span>{{(pageSize*pageIndex)+(i+1)}}</mat-cell>
-                      </ng-container>
-                    <ng-container matColumnDef="userid">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>User Id
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row">
-                          <span class="mobile-label">User Id:</span>{{row.userid}}</mat-cell>
-                      </ng-container>
-                  
-                    <ng-container matColumnDef="name">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Name
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row">
-                          <span class="mobile-label">Name:</span>{{row.name}}</mat-cell>
-                      </ng-container>
-                  
-                   
-                  
-                      <ng-container matColumnDef="doj">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>DOJ
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row">
-                          <span class="mobile-label">DOJ:</span>{{row.doj|date:'dd/MM/yyyy'}}</mat-cell>
-                      </ng-container>
-
-                    
-
-                      <ng-container matColumnDef="investment">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Investment
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row">
-                          <span class="mobile-label">Investment:</span>{{row.investment}}</mat-cell>
-                      </ng-container>
-
-                      <ng-container matColumnDef="level" >
-                        <mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="level > 0">Level
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row" [hidden]="level > 0">
-                          <span class="mobile-label">Level:</span>{{row.level}}</mat-cell>
-                      </ng-container>
-                  
-                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                      <mat-row *matRowDef="let row; columns: displayedColumns;" 
-                        [style.cursor]="'pointer'"  matRipple>
-                      </mat-row>
-                  </table>
+<div class="animated fadeIn">
+  <form (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-header">
+                    <strong>Joining Date</strong>
                   </div>
-                  
-              <mat-paginator #paginator [length]="totalRows" [pageIndex]="0" [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 25, 100]" (page)="handlePageEvent($event)" >
-              </mat-paginator>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="ccnumber">From Date :</label>
+                      <div class="input-group">
+                        <input type="text"
+                        class="form-control"
+                        #dp="bsDatepicker"
+                        bsDatepicker
+                        [(bsValue)]="fromDate">
+                                          
+
+                        <span class="input-group-append">
+                          <button
+                            class="btn btn-secondary calendar"
+                            (click)="dp.toggle()"
+                            [attr.aria-expanded]="dp.isOpen"
+                            type="button"
+                          ></button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="ccnumber">Upto Date :</label>
+                      <div class="input-group">
+                        <input type="text"
+                        class="form-control"
+                        #dp="bsDatepicker"
+                        bsDatepicker
+                        [(bsValue)]="fromDate">
+                      
+
+                        <span class="input-group-append">
+                          <button
+                            class="btn btn-secondary calendar"
+                            (click)="dp2.toggle()"
+                            [attr.aria-expanded]="dp2.isOpen"
+                            type="button"
+                          ></button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-header">
+                    <strong>Team Options</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="ccnumber">Team Type :</label>
+                      <div class="input-group">
+                        <select
+                          id="Id"
+                          #Id="ngModel"
+                          class="hideLabel form-control"
+                          [(ngModel)]="findparam"
+                          name="Id"
+                        >
+                          <option value="2" selected>All Downlines</option>
+                          <option value="1">Left Team</option>
+                          <option value="0">Right Team</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="ccnumber">User Id :</label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          [(ngModel)]="userid"
+                          name="userid"
+                          class="form-control"
+                          placeholder="User Id"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="card-footer">
+            <span class="float-right"
+              ><button class="btn btn-sm btn-success" type="submit">
+                <i class="fa fa-dot-circle-o"></i> Submit
+              </button></span
+            >
+          </div>
+        </div>
+        <!--/.col-->
+      </div>
+    </div>
+  </form>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i>
+          Downline List
+          <div class="card-header-actions" [hidden]="!printdataloaded">
+            <button
+              type="button"
+              printSectionId="tblpins"
+              class="card-header-action btn btn-link"
+              ngxPrint
+            >
+              <i class="fa fa-print"></i>
+            </button>
+            <button
+              type="button"
+              class="card-header-action btn btn-link"
+              (click)="exporttoexcel()"
+            >
+              <i class="fa fa-file-excel-o"></i>
+            </button>
+            <button
+              type="button"
+              class="card-header-action btn btn-link"
+              (click)="exporttopdf()"
+            >
+              <i class="fa fa-file-pdf-o"></i>
+            </button>
+          </div>
+          <img
+            style="text-align: right"
+            src="../../../assets/loader.gif"
+            [hidden]="!loading"
+            height="50px"
+          />
+        </div>
+        <div class="card-body">
+          <table
+            class="table table-bordered table-responsive-sm table-hover table-outline mb-0"
+          >
+            <thead>
+              <tr>
+                <th>User Status</th>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Joined On</th>
+                <th>Activated On</th>
+                <th>Plan Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of pinsdata">
+                <td class="text-center">
+                  <div class="avatar">
+                    <button disabled class="btn btn-lg btn-brand">
+                      <i class="fa fa-user-o"></i>
+                    </button>
+                    <span
+                      *ngIf="p.isapproved == '1'"
+                      class="avatar-status badge-success"
+                    ></span>
+                    <span
+                      *ngIf="p.isapproved == '0'"
+                      class="avatar-status badge-danger"
+                    ></span>
+                  </div>
+                </td>
+                <td>{{ p.userid }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.city }}</td>
+                <td>{{ p.doj | date : "dd/MM/yyyy" }}</td>
+                <td>{{ p.udoa | date : "dd/MM/yyyy" }}</td>
+                <td>{{ p.planname }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <pagination
+            [ngModel]="page"
+            [totalItems]="totalrows"
+            [itemsPerPage]="pagesize"
+            (pageChanged)="pageChanged($event)"
+            [maxSize]="10"
+          ></pagination>
+          <div [hidden]="!loading">Loading... Please wait...</div>
+        </div>
+        <div class="card-footer">
+          Showing results {{ rowfrom }} - {{ rowupto }} of {{ totalrows }}
+          <span class="float-right">
+            Total Points : <strong>{{ tpvalue }}</strong>
+          </span>
         </div>
       </div>
     </div>
-  </section>
+    <div [hidden]="hideprintdata" class="card-body">
+      <table class="table" width="100%" border="1" id="tblpins">
+        <thead>
+          <tr [ngSwitch]="findparam">
+            <th colspan="6" align="center">
+              <h1>
+                Dowline List (<span *ngSwitchCase="1">Left</span
+                ><span *ngSwitchCase="2">Right</span
+                ><span *ngSwitchCase="3">Direct</span
+                ><span *ngSwitchDefault>All Downline</span>)
+              </h1>
+            </th>
+          </tr>
+          <tr>
+            <th colspan="6" align="center">
+              <h3>
+                From : {{ format(fromDate) }} - Upto : {{ format(toDate) }}
+              </h3>
+            </th>
+          </tr>
+          <tr>
+            <th>User Id</th>
+            <th>Email</th>
+
+            <th>Joined On</th>
+            <th>Activated On</th>
+            <th>Sponsor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of pinsdataprint">
+            <td>{{ p.userid }}</td>
+            <td>{{ p.email }}</td>
+
+            <td>{{ p.doj }}</td>
+            <td>{{ p.udoa | date : "dd/MM/yyyy" }}</td>
+            <td>{{ p.sid }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

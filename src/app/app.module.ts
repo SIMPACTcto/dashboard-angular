@@ -24,13 +24,18 @@ import {
   HTTP_INTERCEPTORS,
   HttpClient,
 } from '@angular/common/http';
-
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { enGbLocale } from 'ngx-bootstrap/locale';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { MemberService } from '@core/service/member.adbo.sbendervice';
+import { MemberService } from '@core/service/member.service';
 import { AccountsService } from '@core/service/accounts.service';
 import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 import { ShareIconsModule } from 'ngx-sharebuttons/icons';
+
+defineLocale('en-gb', enGbLocale); 
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -53,6 +58,8 @@ export function createTranslateLoader(http: HttpClient) {
     HttpClientModule,
     LoadingBarRouterModule,
     NgScrollbarModule,
+    PaginationModule.forRoot(),
+    BsDatepickerModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -69,6 +76,7 @@ export function createTranslateLoader(http: HttpClient) {
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: BsDatepickerConfig, useValue: { dateInputFormat: 'DD/MM/YYYY' } },
     fakeBackendProvider, AccountsService,
   ],
   bootstrap: [AppComponent],
